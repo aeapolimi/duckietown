@@ -1,4 +1,5 @@
 gym-duckietown/
+a2c_duckieloop/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
