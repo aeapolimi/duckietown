@@ -15,6 +15,34 @@ from stable_baselines.common.evaluation import evaluate_policy
 
 from stable_baselines.common.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise, AdaptiveParamNoiseSpec
  
+def model_DDPG(gamma):
+  n_actions = env.action_space.shape[-1]
+  param_noise = AdaptiveParamNoiseSpec(initial_stddev=0.1, desired_action_stddev=0.1)
+  action_noise = OrnsteinUhlenbeckActionNoise(mean=np.zeros(n_actions), sigma=float(0.2) * np.ones(n_actions))
+
+  return DDPG(
+        "CnnPolicy",
+        env,
+        gamma=gamma,
+        verbose=0,
+        param_noise=param_noise, #exploration noise
+        action_noise=action_noise, #policy noise
+        buffer_size=50000,
+        tensorboard_log="./a2c_duckieloop/"
+        )
+
+def model_A2C(gamma):
+  return A2C(
+      CnnLstmPolicy,
+      env,
+      gamma=gamma,
+      n_steps=5,
+      learning_rate=0.0005, #def=0.0007
+      lr_schedule='constant',
+      verbose=0,
+      tensorboard_log="./optuna/"
+    )
+
 def main():
     map_name = "Duckietown-small_loop-v0" #@param ['Duckietown-straight_road-v0','Duckietown-4way-v0','Duckietown-udem1-v0','Duckietown-small_loop-v0','Duckietown-small_loop_cw-v0','Duckietown-zigzag_dists-v0','Duckietown-loop_obstacles-v0','Duckietown-loop_pedestrians-v0']
     display = Display(visible=0, size=(1400, 900))
@@ -22,16 +50,7 @@ def main():
     env = gym.make(map_name, accept_start_angle_deg=4)
     env = ObsWrapper(env)
     
-    model = A2C(
-        CnnLstmPolicy,
-        env,
-        gamma=0.55, #Discount reward def=0.99
-        n_steps=5,
-        learning_rate=0.0001435, #def=0.0007
-        lr_schedule='constant',
-        verbose=0,
-        tensorboard_log="./a2c_duckieloop/"
-    )
+    model = model_A2C(0.55)
 
     for time in range(10):
         model.learn(total_timesteps=int(2e4))
