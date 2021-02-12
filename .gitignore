@@ -1,5 +1,6 @@
 gym-duckietown/
 a2c_duckieloop/
+ddpg_duckieloop/
 optuna/
 models/
 
