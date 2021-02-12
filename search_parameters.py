@@ -12,6 +12,7 @@ from wrappers import ObsWrapper
 
 from stable_baselines.common.vec_env import VecFrameStack
 from stable_baselines import A2C
+from stable_baselines import DDPG
 from stable_baselines.common.policies import CnnLstmPolicy
 from stable_baselines.common.evaluation import evaluate_policy
 
