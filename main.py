@@ -16,7 +16,12 @@ from stable_baselines.common.evaluation import evaluate_policy
 
 from stable_baselines.common.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise, AdaptiveParamNoiseSpec
  
-def model_DDPG(gamma, tensorboard="./ddpg_duckieloop/"):
+def model_DDPG(gamma: float, tensorboard="./ddpg_duckieloop/"):
+    """
+        Model DDPG
+
+        :param gamma: (float) Reward discount
+    """
   n_actions = env.action_space.shape[-1]
   param_noise = AdaptiveParamNoiseSpec(initial_stddev=0.1, desired_action_stddev=0.1)
   action_noise = OrnsteinUhlenbeckActionNoise(mean=np.zeros(n_actions), sigma=float(0.2) * np.ones(n_actions))
@@ -32,7 +37,12 @@ def model_DDPG(gamma, tensorboard="./ddpg_duckieloop/"):
         tensorboard_log=tensorboard
         )
 
-def model_A2C(gamma, tensorboard="./a2c_duckieloop/"):
+def model_A2C(gamma: float, tensorboard="./a2c_duckieloop/"):
+    """
+        Model A2C
+
+        :param gamma: (float) Reward discount
+    """
   return A2C(
       CnnLstmPolicy,
       env,
@@ -43,6 +53,8 @@ def model_A2C(gamma, tensorboard="./a2c_duckieloop/"):
       verbose=0,
       tensorboard_log=tensorboard
     )
+
+
 
 def main():
     map_name = "Duckietown-small_loop-v0" #@param ['Duckietown-straight_road-v0','Duckietown-4way-v0','Duckietown-udem1-v0','Duckietown-small_loop-v0','Duckietown-small_loop_cw-v0','Duckietown-zigzag_dists-v0','Duckietown-loop_obstacles-v0','Duckietown-loop_pedestrians-v0']

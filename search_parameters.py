@@ -26,8 +26,12 @@ env = gym.make(map_name, accept_start_angle_deg=4)
 env = ObsWrapper(env)
 tensorboard_callback = TensorBoardCallback("./optuna/", metric_name="optuna_mean_reward")
 
+def model_DDPG(gamma: float, tensorboard="./optuna/"):
+  """
+    Model DDPG
 
-def model_DDPG(gamma, tensorboard="./optuna/"):
+    :param gamma: (float) Reward discount
+    """
   n_actions = env.action_space.shape[-1]
   param_noise = AdaptiveParamNoiseSpec(initial_stddev=0.1, desired_action_stddev=0.1)
   action_noise = OrnsteinUhlenbeckActionNoise(mean=np.zeros(n_actions), sigma=float(0.2) * np.ones(n_actions))
@@ -43,7 +47,12 @@ def model_DDPG(gamma, tensorboard="./optuna/"):
         tensorboard_log=tensorboard
         )
 
-def model_A2C(gamma, tensorboard="./optuna/"):
+def model_A2C(gamma: float, tensorboard="./optuna/"):
+  """
+    Model A2C
+
+    :param gamma: (float) Reward discount
+    """
   return A2C(
       CnnLstmPolicy,
       env,
