@@ -35,8 +35,8 @@ def main():
 
     for time in range(10):
         model.learn(total_timesteps=int(2e4))
-        model.save("models/a2c"+map_name+str(1e4*time))
         mean_reward, std_reward = evaluate_policy(model, model.get_env(), n_eval_episodes=10)
+        model.save("models/a2c"+map_name+str(1e4*time))
         print(f"#{time} Trained 10000 timesteps, mean_reward: {mean_reward}, std_reward: {std_reward}")
   
     ipythondisplay.clear_output(wait=True)

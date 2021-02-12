@@ -1,5 +1,7 @@
 gym-duckietown/
 a2c_duckieloop/
+optuna/
+models/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
