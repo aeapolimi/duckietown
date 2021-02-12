@@ -66,7 +66,7 @@ def model_A2C(gamma: float, tensorboard="./optuna/"):
  
 def objective(trial: optuna.trial.Trial)  -> float:
 
-  gamma = trial.suggest_float("learning_rate", 0.4, 0.99)
+  gamma = trial.suggest_float("gamma", 0.4, 0.99)
   
   model = model_DDPG(gamma)
   model.learn(total_timesteps=int(1e4))
@@ -79,4 +79,4 @@ def objective(trial: optuna.trial.Trial)  -> float:
 
 if __name__ == "__main__":
   study = optuna.create_study(direction='maximize')
-  study.optimize(objective, n_trials=20, callbacks=[tensorboard_callback])
+  study.optimize(objective, n_trials=20)
