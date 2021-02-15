@@ -6,8 +6,8 @@ from IPython import display as ipythondisplay
 import gym
 import gym_duckietown
 
-from wrappers import ObsWrapper
-from duckie_wrappers import NormalizeWrapper, ImgWrapper, DtRewardWrapper, ActionWrapper, ResizeWrapper
+from utils.wrappers import ObsWrapper
+from utils.duckie_wrappers import NormalizeWrapper, ImgWrapper, DtRewardWrapper, ActionWrapper, ResizeWrapper
 
 from stable_baselines.common.vec_env import VecFrameStack
 from stable_baselines import A2C
@@ -60,6 +60,7 @@ def model_A2C(gamma: float, env, tensorboard="./a2c_duckieloop/"):
 
 
 def main():
+    modello = "ddpg"
     map_name = "Duckietown-small_loop-v0" #@param ['Duckietown-straight_road-v0','Duckietown-4way-v0','Duckietown-udem1-v0','Duckietown-small_loop-v0','Duckietown-small_loop_cw-v0','Duckietown-zigzag_dists-v0','Duckietown-loop_obstacles-v0','Duckietown-loop_pedestrians-v0']
     display = Display(visible=0, size=(1400, 900))
     display.start()
@@ -71,12 +72,19 @@ def main():
     # env = ActionWrapper(env)
     env = DtRewardWrapper(env)
     
-    model = model_DDPG(gamma=0.99, env=env)
+    if modello == "ddpg":
+        model = model_DDPG(gamma=0.99, env=env)
+    if modello == "a2c":
+        model = model_A2C(gamma=0.99, env=env)
 
-    for time in range(10):
+    if True:
+        model = DDPG.load("models/a2cDuckietown-small_loop-v090000.0")
+        model.set_env(env)
+
+    for time in range(40):
         model.learn(total_timesteps=int(2e4))
         mean_reward, std_reward = evaluate_policy(model, model.get_env(), n_eval_episodes=10)
-        model.save("models/a2c"+map_name+str(1e4*time))
+        model.save("models/"+modello+map_name+str(1e4*time))
         print(f"#{time} Trained 10000 timesteps, mean_reward: {mean_reward}, std_reward: {std_reward}")
   
     ipythondisplay.clear_output(wait=True)

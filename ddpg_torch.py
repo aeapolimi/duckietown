@@ -137,7 +137,7 @@ if __name__=="__main__":
     policy_freq=2  # Frequency of delayed policy updates
     env_timesteps=500  # Frequency of delayed policy updates
     replay_buffer_max_size=10000  # Maximum number of steps to keep in the replay buffer
-    model_dir='learning/reinforcement/pytorch/models/'
+    model_dir='/torchmodels'
 
     _train(
         seeds=seeds,
