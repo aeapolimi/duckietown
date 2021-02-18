@@ -6,7 +6,7 @@ from IPython import display as ipythondisplay
 import gym
 import gym_duckietown
 
-from utils.wrappers import ObsWrapper
+from utils.wrappers import ObsWrapper, CropResizeWrapper
 from utils.duckie_wrappers import NormalizeWrapper, ImgWrapper, DtRewardWrapper, ActionWrapper, ResizeWrapper
 
 from stable_baselines.common.vec_env import VecFrameStack
@@ -47,7 +47,7 @@ def model_A2C(gamma: float, env, tensorboard="./a2c_duckieloop/"):
         :param gamma: (float) Reward discount
     """
     return A2C(
-        CnnLstmPolicy,
+        "CnnPolicy",
         env,
         gamma=gamma,
         n_steps=5,
@@ -57,15 +57,32 @@ def model_A2C(gamma: float, env, tensorboard="./a2c_duckieloop/"):
         tensorboard_log=tensorboard
         )
 
+def model_ACKTR(gamma: float, env, tensorboard="./acktr_duckieloop/"):
+    """
+        Model ACKTR
+
+        :param gamma: (float) Reward discount
+    """
+    return ACKTR(
+        "CnnPolicy",
+        env,
+        gamma=gamma,
+        n_steps=5,
+        learning_rate=0.25, #def=0.25
+        lr_schedule='constant',
+        verbose=0,
+        tensorboard_log=tensorboard
+        )
 
 
 def main():
-    modello = "ddpg"
+    modello = "a2c"
     map_name = "Duckietown-small_loop-v0" #@param ['Duckietown-straight_road-v0','Duckietown-4way-v0','Duckietown-udem1-v0','Duckietown-small_loop-v0','Duckietown-small_loop_cw-v0','Duckietown-zigzag_dists-v0','Duckietown-loop_obstacles-v0','Duckietown-loop_pedestrians-v0']
     display = Display(visible=0, size=(1400, 900))
     display.start()
-    env = gym.make(map_name, accept_start_angle_deg=4)
-    env = ObsWrapper(env)
+    env = gym.make(map_name)
+    # env = ObsWrapper(env)
+    env = CropResizeWrapper(env)
     # env = ResizeWrapper(env)
     # env = NormalizeWrapper(env)
     # env = ImgWrapper(env)
@@ -76,13 +93,15 @@ def main():
         model = model_DDPG(gamma=0.99, env=env)
     if modello == "a2c":
         model = model_A2C(gamma=0.99, env=env)
+    if modello == "acktr":
+        model = model_ACKTR(gamma=0.99, env=env)
 
-    if True:
-        model = DDPG.load("models/a2cDuckietown-small_loop-v090000.0")
+    if False:
+        model = DDPG.load("models/a2cDuckietown-small_loop-v090000.0", tensorboard_log="./ddpg_duckieloop/")
         model.set_env(env)
 
-    for time in range(40):
-        model.learn(total_timesteps=int(2e4))
+    for time in range(10):
+        model.learn(total_timesteps=int(1e5))
         mean_reward, std_reward = evaluate_policy(model, model.get_env(), n_eval_episodes=10)
         model.save("models/"+modello+map_name+str(1e4*time))
         print(f"#{time} Trained 10000 timesteps, mean_reward: {mean_reward}, std_reward: {std_reward}")

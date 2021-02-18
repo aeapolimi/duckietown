@@ -106,3 +106,13 @@ class ObsWrapper(gym.ObservationWrapper):
         balanced = white_balance(resized)
         img = takewhiteyellow(balanced)
         return img
+
+class CropResizeWrapper(gym.ObservationWrapper):
+    def __init__(self, env):
+        super(CropResizeWrapper, self).__init__(env)
+        self.observation_space = Box(0, 255, (img_final_height, img_final_width, 3), dtype=self.observation_space.dtype)
+        self.env = env
+
+    def observation(self, obs):
+        cropped = cropimg(obs)
+        return resizeimg(cropped, resize_ratio)
