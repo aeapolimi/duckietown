@@ -96,14 +96,10 @@ def white_balance(img):
 class ObsWrapper(gym.ObservationWrapper):
     def __init__(self, env):
         super(ObsWrapper, self).__init__(env)
-        self.observation_space = Box(0, 255, (img_final_height, img_final_width, 3), dtype=self.observation_space.dtype)
-        self.accept_start_angle_deg = 4
         self.env = env
 
     def observation(self, obs):
-        cropped = cropimg(obs)
-        resized = resizeimg(cropped, resize_ratio)
-        balanced = white_balance(resized)
+        balanced = white_balance(obs)
         img = takewhiteyellow(balanced)
         return img
 
@@ -116,3 +112,24 @@ class CropResizeWrapper(gym.ObservationWrapper):
     def observation(self, obs):
         cropped = cropimg(obs)
         return resizeimg(cropped, resize_ratio)
+
+
+class MyRewardWrapper(gym.RewardWrapper):
+    def __init__(self, env):
+        super(MyRewardWrapper, self).__init__(env)
+
+    def reward(self, reward):
+        #-10, 10, 4 very bad
+        #-50, 10, 4 fairly bad (A2C_REW_-50)
+        #-50, 10, 0 very bad
+        #-50, 10, 1 bad
+        #-50, 30, 4 very bad
+        #-50, 15, 4 bad
+        if reward == -1000:
+            reward = -30
+        elif reward > 0:
+            reward += 10
+        else:
+            reward += 4
+
+        return reward

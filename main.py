@@ -6,7 +6,7 @@ from IPython import display as ipythondisplay
 import gym
 import gym_duckietown
 
-from utils.wrappers import ObsWrapper, CropResizeWrapper
+from utils.wrappers import ObsWrapper, CropResizeWrapper, MyRewardWrapper
 from utils.duckie_wrappers import NormalizeWrapper, ImgWrapper, DtRewardWrapper, ActionWrapper, ResizeWrapper
 
 from stable_baselines.common.vec_env import VecFrameStack
@@ -81,13 +81,13 @@ def main():
     display = Display(visible=0, size=(1400, 900))
     display.start()
     env = gym.make(map_name)
-    # env = ObsWrapper(env)
     env = CropResizeWrapper(env)
+    env = ObsWrapper(env)
     # env = ResizeWrapper(env)
     # env = NormalizeWrapper(env)
     # env = ImgWrapper(env)
     # env = ActionWrapper(env)
-    env = DtRewardWrapper(env)
+    env = MyRewardWrapper(env)
     
     if modello == "ddpg":
         model = model_DDPG(gamma=0.99, env=env)
