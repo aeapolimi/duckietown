@@ -1,7 +1,8 @@
-from pyvirtualdisplay import Display
 import numpy as np
 import matplotlib.pyplot as plt
-from IPython import display as ipythondisplay
+if os.name == 'posix' and "DISPLAY" not in os.environ:
+    from IPython import display as ipythondisplay
+    from pyvirtualdisplay import Display
 
 import gym
 import gym_duckietown
@@ -78,8 +79,10 @@ def model_ACKTR(gamma: float, env, tensorboard="./acktr_duckieloop/"):
 def main():
     modello = "a2c"
     map_name = "Duckietown-small_loop-v0" #@param ['Duckietown-straight_road-v0','Duckietown-4way-v0','Duckietown-udem1-v0','Duckietown-small_loop-v0','Duckietown-small_loop_cw-v0','Duckietown-zigzag_dists-v0','Duckietown-loop_obstacles-v0','Duckietown-loop_pedestrians-v0']
-    display = Display(visible=0, size=(1400, 900))
-    display.start()
+    
+    if os.name == 'posix' and "DISPLAY" not in os.environ:
+        display = Display(visible=0, size=(1400, 900))
+        display.start()
     env = gym.make(map_name)
     env = CropResizeWrapper(env)
     env = ObsWrapper(env)
@@ -106,7 +109,8 @@ def main():
         model.save("models/"+modello+map_name+str(1e4*time))
         print(f"#{time} Trained 10000 timesteps, mean_reward: {mean_reward}, std_reward: {std_reward}")
   
-    ipythondisplay.clear_output(wait=True)
+    if os.name == 'posix' and "DISPLAY" not in os.environ:
+        ipythondisplay.clear_output(wait=True)
 
 if __name__ == "__main__":
     main()
