@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 if os.name == 'posix' and "DISPLAY" not in os.environ:
     from IPython import display as ipythondisplay
     from pyvirtualdisplay import Display
