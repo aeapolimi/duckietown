@@ -3,6 +3,6 @@ matplotlib==3.3.2
 mpi4py==3.0.3
 numpy==1.19.2
 PyVirtualDisplay==2.0
-stable-baselines==2.10.1
+stable-baselines[mpi]==2.10.1
 tensorboard==1.14.0
 tensorflow==1.14.0
