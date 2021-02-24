@@ -125,11 +125,12 @@ class MyRewardWrapper(gym.RewardWrapper):
         #-50, 10, 1 bad
         #-50, 30, 4 very bad
         #-50, 15, 4 bad
+        #-30, 10, 4 crashes a lot
         if reward == -1000:
-            reward = -30
+            reward = -50
         elif reward > 0:
             reward += 10
         else:
-            reward += 4
+            reward += 3
 
         return reward

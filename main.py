@@ -19,6 +19,9 @@ from stable_baselines.common.evaluation import evaluate_policy
 
 from stable_baselines.common.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise, AdaptiveParamNoiseSpec
  
+from pathlib import Path
+Path("./models").mkdir(parents=True, exist_ok=True)
+
 def model_DDPG(gamma: float, env, tensorboard="./ddpg_duckieloop/"):
     """
         Model DDPG
