@@ -1,4 +1,5 @@
 from stable_baselines.common.vec_env import VecVideoRecorder, DummyVecEnv
+from time import sleep
 
 from utils.wrappers import ObsWrapper, CropResizeWrapper, MyRewardWrapper
 from utils.duckie_wrappers import NormalizeWrapper, ImgWrapper, DtRewardWrapper, ActionWrapper, ResizeWrapper
@@ -10,21 +11,22 @@ import gym
 import gym_duckietown
 
 map_name = "Duckietown-small_loop-v0"
-model_to_be_loaded = "a2cDuckietown-small_loop-v060000.0"
+model_to_be_loaded = "a2cDuckietown-small_loop-v00.0"
 modello = "a2c"
 
 if __name__=="__main__":
     if modello == "a2c":
-        model = A2C.load("../models/"+model_to_be_loaded)
+        model = A2C.load("./models/"+model_to_be_loaded)
     elif modello == "ddpg":
-        model = DDPG.load("../models/"+model_to_be_loaded)
+        model = DDPG.load("./models/"+model_to_be_loaded)
     env = gym.make(map_name)
     env = CropResizeWrapper(env)
     env = ObsWrapper(env)
     eval_env = MyRewardWrapper(env)
 
     obs = eval_env.reset()
-    for _ in range(video_length):
+    for _ in range(100):
+        sleep(0.5)
         action, _ = model.predict(obs)
         obs, reward, done, _ = eval_env.step(action)
         env.render(mode="human")
@@ -34,3 +36,4 @@ if __name__=="__main__":
         elif done:
             print("SAFE")
             print(reward)
+    
